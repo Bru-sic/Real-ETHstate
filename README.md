@@ -2,7 +2,7 @@
 An application based on Ethereum smart contracts to buy and sell real estate.
 
 
-Team: Bruno, Renee, Owen, Kerry
+Team: Bruno, Owen, Kerry
 
 Date: 30 January 2024
 
