@@ -5,7 +5,7 @@ import {ERC4907} from "./ERC4907.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MyToken is ERC4907 /* ERC721Burnable, Ownable */ {
+contract Real_ETHstate is ERC4907 /* ERC721Burnable, Ownable */ {
     struct PropertyInfo
     {
         /// @dev Address Line 1. E.g.: `Block C Unit 1, 234 Bridge Road Annandale NSW 2008 Australia`
