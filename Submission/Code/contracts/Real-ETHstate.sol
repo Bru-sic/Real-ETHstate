@@ -6,11 +6,30 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyToken is ERC4907 /* ERC721Burnable, Ownable */ {
+    struct PropertyInfo
+    {
+        /// @dev Address Line 1. E.g.: `Block C Unit 1, 234 Bridge Road Annandale NSW 2008 Australia`
+        string street_address;
+
+        /// @dev Land registry Lot / Plan number reference. E.g.: `1863/1000001`, or `35/G/5720` or `1/SP
+        string lot_plan_number;
+
+        /// @dev IPFS URI of the Property
+        string property_uri;
+
+        /// @dev Asking Rent - the weekly rent amount being requested (generally set by Owner of the Property)
+        uint256 askingRent;
+
+    }
+
+    /// @dev create the mapping to Property Information based on a token for a property
+    mapping (uint256  => PropertyInfo) internal _propertyInfo;
+
     uint256 private _nextTokenId;
     address public owner;
 
     modifier onlyOwner() {
-        require(msg.sender==owner, "You are not the owner");
+        require(msg.sender==owner, "Real-ETHstate: You are not the owner");
         _;
     }
 
@@ -20,20 +39,16 @@ contract MyToken is ERC4907 /* ERC721Burnable, Ownable */ {
         owner = msg.sender;
     }
 
-    function safeMint(address to) public onlyOwner {
+    function safeMint(address to,
+                      string memory street_address,
+                      string memory lot_plan_number,
+                      string memory property_uri) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
-    }
-/*function _msgSender() internal view override(Context, ERC2771Context)
-      returns (address sender) {
-      sender = ERC2771Context._msgSender();
-  }
 
-  function _msgData() internal view override(Context, ERC2771Context)
-      returns (bytes calldata) {
-      return ERC2771Context._msgData();
-  }
-*/
+        _propertyInfo[tokenId] = PropertyInfo(street_address, lot_plan_number, property_uri, 0);
+
+    }
 }
 
 
