@@ -56,6 +56,10 @@ TO DO
 # Briefing
 * [Project Briefing](./Briefing/Capstone_Project_Guidelines.md)   
 
+
+# Future Enhancements
+* [User authentication](https://docs.streamlit.io/library/advanced-features/multipage-apps/custom-navigation)
+
 # Disclaimer
 1. The smart contract included in this project is provided as is.
 1. No guarantee, representation or warranty is being made, express or implied, as to the safety or correctness of the user interface or of the smart contract itself.
