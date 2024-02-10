@@ -5,7 +5,7 @@ import numpy as np
 #######
 ### Main code section of this module
 #######
-
+st.set_page_config(layout="wide")
 ## Set the page configuration to show a title and icon in the brower's tab
 st.set_page_config(page_title="Real-ETHstat - Tenancy Application", page_icon="🔑")
 

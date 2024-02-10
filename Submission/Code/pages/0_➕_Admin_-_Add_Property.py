@@ -12,14 +12,13 @@ load_dotenv()
 # Define and connect a new Web3 provider
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 
+## Set the page configuration to show a title and icon in the brower's tab
+st.set_page_config(page_title="Real-ETHstat - Add a Property", page_icon="➕", layout="wide")
+
+
+# Retrieve the contract connection details from the Cache
 contract = st.session_state.contract
 
-#######
-### Main code section of this module
-#######
-
-## Set the page configuration to show a title and icon in the brower's tab
-st.set_page_config(page_title="Real-ETHstat - Add a Property", page_icon="➕")
 
 st.markdown("# Add a Property")
 st.markdown("Use this function once a property owner has provided all the required details of themselves and their property to Real-ETHstate. You will need:")
