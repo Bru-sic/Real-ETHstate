@@ -12,8 +12,6 @@ import streamlit as st
 
 load_dotenv()
 
-# Define and connect a new Web3 provider
-w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 
 ################################################################################
 # Contract Helper function:
@@ -25,6 +23,8 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 #@st.cache(allow_output_mutation=True)
 @st.cache_resource()
 def load_contract():
+    # Define and connect a new Web3 provider
+    w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 
     # Load the contract ABI
     with open(Path('./contracts/compiled/Real-ETHstate.json')) as f:
@@ -43,7 +43,8 @@ def load_contract():
 
 
 # Load the contract
-contract = load_contract()
+if "contract" not in st.session_state:
+    st.session_state.contract = load_contract()
 
 
 st.title("Real-ETHstate")

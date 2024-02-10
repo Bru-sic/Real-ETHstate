@@ -4,11 +4,15 @@ from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
+# Import Regular Expression Module (RE)
+import re
 
 load_dotenv()
 
 # Define and connect a new Web3 provider
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
+
+contract = st.session_state.contract
 
 #######
 ### Main code section of this module
@@ -20,11 +24,24 @@ st.set_page_config(page_title="Real-ETHstat - Add a Property", page_icon="➕")
 st.markdown("# Add a Property")
 st.markdown("Use this function once a property owner has provided all the required details of themselves and their property to Real-ETHstate. You will need:")
 st.markdown("1. Details of the property")
-st.markdown("2. An Admin Account")
-st.markdown("3. Account Number of the Owner")
+st.markdown("2. Property Owner's Account Number")
 
-accounts = w3.eth.accounts
-address = st.selectbox("Select Admin Account", options=accounts)
+#accounts = w3.eth.accounts
+#property_eoa_address = st.selectbox("Select Admin Account", options=accounts)
+
+# Capture the Property's EOA address
+property_eoa_address = st.text_input("Owner's EOA Account",
+                                     max_chars=42,
+                                     placeholder= "E.g. 0x1234567890abcdefABCDEF1234567890abcdefAB",
+                                     help="""Owner's EOA Account. An EOA Account is prefixed with `0x` followed by 40 hexadecimal case sensitive characters
+                                     E.g. `0x1234567890abcdefABCDEF1234567890abcdefAB`""");
+
+# Use a regular expression with the match function to validate that the EOA Account Address conforms to a valid address.
+# The address must start with `0x` followed by 40 hexadecimal case sensitive characters
+property_eoa_address_valid = re.match(r"0x[a-fA-F0-9]{40}$", property_eoa_address) and not re.match(r"0x[0]{40}$", property_eoa_address)
+if not property_eoa_address_valid:
+    st.error("Owner's EOA Account is invalid", icon="❗")    
+
 st.markdown("---")
 
 ################################################################################
@@ -39,62 +56,25 @@ street_address = st.text_input("Property Location,", placeholder= "Unit/Street N
 #/// @dev Asking Rent - the weekly rent amount being requested
 #uint256 askingRent; Set by the property owner
 
-
-
 lot_plan_number = st.text_input("Property Title Reference", placeholder= "Lot/Plan Number", help="Land registry Lot / Plan number reference. E.g.: `1863/1000001`, or `35/G/5720` or `1/SP`");
 property_uri = st.text_input("Property URI")
 
-if st.button("Register Artwork"):
-    tx_hash = contract.functions.registerArtwork(
-        address,
-        artwork_name,
-        artist_name,
-        int(initial_appraisal_value),
-        artwork_uri
-    ).transact({'from': address, 'gas': 1000000})
+# Set the asking rent to 0 when minting as the owner will set it for themselves when activating the property for rent
+askingRent = 0
+
+inputs_complete = (property_eoa_address_valid and street_address and lot_plan_number and property_uri)
+register_button = st.button("Register Property",
+                            disabled= not inputs_complete)
+
+if register_button:
+    tx_hash = contract.functions.safeMint(
+        property_eoa_address,
+        street_address,
+        lot_plan_number,
+        property_uri
+    ).transact({'from': property_eoa_address, 'gas': 1000000})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     st.write("Transaction receipt mined:")
     st.write(dict(receipt))
 st.markdown("---")
 
-
-################################################################################
-# Appraise Art
-################################################################################
-st.markdown("## Appraise Artwork")
-tokens = contract.functions.totalSupply().call()
-token_id = st.selectbox("Choose an Art Token ID", list(range(tokens)))
-new_appraisal_value = st.text_input("Enter the new appraisal amount")
-report_uri = st.text_area("Enter notes about the appraisal")
-if st.button("Appraise Artwork"):
-
-    # Use the token_id and the report_uri to record the appraisal
-    tx_hash = contract.functions.newAppraisal(
-        token_id,
-        int(new_appraisal_value),
-        report_uri
-    ).transact({"from": w3.eth.accounts[0]})
-    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    st.write(receipt)
-st.markdown("---")
-
-################################################################################
-# Get Appraisals
-################################################################################
-st.markdown("## Get the appraisal report history")
-art_token_id = st.number_input("Artwork ID", value=0, step=1)
-if st.button("Get Appraisal Reports"):
-    appraisal_filter = contract.events.Appraisal.createFilter(
-        fromBlock=0,
-        argument_filters={"tokenId": art_token_id}
-    )
-    appraisals = appraisal_filter.get_all_entries()
-    if appraisals:
-        for appraisal in appraisals:
-            report_dictionary = dict(appraisal)
-            st.markdown("### Appraisal Report Event Log")
-            st.write(report_dictionary)
-            st.markdown("### Appraisal Report Details")
-            st.write(report_dictionary["args"])
-    else:
-        st.write("This artwork has no new appraisals")
