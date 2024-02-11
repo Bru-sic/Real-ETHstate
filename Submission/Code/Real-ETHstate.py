@@ -60,17 +60,20 @@ page_body_left, page_body_right = page_body.columns([0.6,0.4])
 page_footer = st.container(border=False)
 
 # Present the header content
-header_col = page_header.columns([.8,.1,.1]) # Create 3 sections in the header. One of 80% width, the others of 10% each.
+header_col = page_header.columns([.1,.7,.1,.1]) # Create sections in the header for content
 
 # Header text
-header_col[0].markdown("Discover your Dream Property with Real-ETHstate Inc. [Learn More](http://localhost:8502/Learn_More)")
+header_col[0].image('../Resources/Real-ETHstate_logo.png')
+header_col[1].markdown("Discover your Dream Property with Real-ETHstate Inc. [Learn More](http://localhost:8502/learn_more)")
+
+
 
 # Sign In push button
-if header_col[1].button("Sign In", type="secondary"):
+if header_col[2].button("Sign In", type="secondary"):
             st.info('Coming soon', icon="ℹ️")
 
 # Join push button
-if header_col[2].button("Join", type="primary"):
+if header_col[3].button("Join", type="primary"):
             st.info('Coming soon', icon="ℹ️")
 
 # Background image on right side of page
@@ -112,5 +115,36 @@ with tile[2]:
 
 page_body_rightleft = page_body.container(border=True)
 
-page_footer.markdown("---")
-page_footer.markdown("(C) Copyright 2024 Real-ETHstate Inc \t[Terms and Conditions](http://./toc.html)")
+with page_footer:
+    footer_cols = st.columns(5)
+    footer_cols[0].markdown("Home")
+    footer_cols[0].markdown("**Properties**")
+    footer_cols[0].markdown("**Testimonials**")
+    footer_cols[0].markdown("**FAQ's**")
+
+    footer_cols[1].markdown("About Us")
+    footer_cols[1].markdown("**Our Story**")
+    footer_cols[1].markdown("**How It Works**")
+    footer_cols[1].markdown("**Our Team**")
+
+    footer_cols[2].markdown("Properties")
+    footer_cols[2].markdown("**Buy**")
+    footer_cols[2].markdown("**Sell**")
+    footer_cols[2].markdown("**Rent**")
+
+    footer_cols[3].markdown("Services")
+    footer_cols[3].markdown("**Valuations**")
+    footer_cols[3].markdown("**Buyer's Agent**")
+    footer_cols[3].markdown("**Property Management**")
+
+    footer_cols[4].markdown("Contact Us")
+    footer_cols[4].markdown("**Contact Form**")
+    footer_cols[4].markdown("**Our Offices**")
+    footer_cols[4].markdown("**Robo Assistant**")
+
+    st.markdown("---")
+    with page_footer:
+        footer_cols = st.columns(5)
+        footer_cols[0].markdown("(C) Copyright 2024 Real-ETHstate Inc.")
+        footer_cols[2].markdown("[Terms and Conditions](http://localhost:8502/terms)")
+        footer_cols[4].image('../Resources/socialmedia.png')

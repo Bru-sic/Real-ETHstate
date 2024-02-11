@@ -34,8 +34,11 @@ contract Real_ETHstate is ERC4907 /* ERC721Burnable, Ownable */ {
 
     }
 
-    /// @dev create the mapping to Property Information based on a token for a property
+    /// @dev Create the mapping to Property Information based on a token for a property
     mapping (uint256  => PropertyInfo) internal _propertyInfo;
+
+    /// @dev Declare the PropertyListing event which will contain the tokenId of a new property, its plan number and IPFS URI
+    event PropertyListing(uint256 tokenId, string lot_plan_number, string property_uri);
 
     uint256 private _nextTokenId;
     address public admin_eoa;
@@ -67,6 +70,10 @@ contract Real_ETHstate is ERC4907 /* ERC721Burnable, Ownable */ {
                       string memory property_uri) public onlyAdmin {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
+
+        ///@dev Emit a PropertyListing event once the new property has been minted.
+        emit PropertyListing(tokenId, lot_plan_number, property_uri);
+
 
         /// @dev Add the property attributes to the mapping but default the rent amount to 0 and set the status to not rented as the last 2 are for the property owner to manage
         _propertyInfo[tokenId] = PropertyInfo(street_address, lot_plan_number, property_type, property_uri, 0, false, to);
