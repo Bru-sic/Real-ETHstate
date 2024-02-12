@@ -65,18 +65,18 @@ page_body.markdown("# Tenancy Application")
 accounts = w3.eth.accounts
 renter_eoa_address = st.selectbox("Select Your Account", options=accounts)
 
-# Capture the Property's EOA address
-#property_eoa_address = page_body.text_input("Owner's EOA Account",
-                                    #  max_chars=42,
-                                    #  placeholder= "E.g. 0x1234567890abcdefABCDEF1234567890abcdefAB",
-                                    #  help="""Owner's EOA Account. An EOA Account is prefixed with `0x` followed by 40 hexadecimal case sensitive characters
-                                    #  E.g. `0x1234567890abcdefABCDEF1234567890abcdefAB`""");
+# Capture the Renter's EOA address
+renter_eoa_address = page_body.text_input("Select your EOA Account",
+                                      max_chars=42,
+                                      placeholder= "E.g. 0x1234567890abcdefABCDEF1234567890abcdefAB",
+                                      help="""Owner's EOA Account. An EOA Account is prefixed with `0x` followed by 40 hexadecimal case sensitive characters
+                                      E.g. `0x1234567890abcdefABCDEF1234567890abcdefAB`""");
 
 # Use a regular expression with the match function to validate that the EOA Account Address conforms to a valid address.
 # The address must start with `0x` followed by 40 hexadecimal case sensitive characters
-# property_eoa_address_valid = re.match(r"0x[a-fA-F0-9]{40}$", property_eoa_address) and not re.match(r"0x[0]{40}$", property_eoa_address)
-# if not property_eoa_address_valid:
-#     page_body.error("Owner's EOA Account is invalid", icon="❗")    
+renter_eoa_address_valid = re.match(r"0x[a-fA-F0-9]{40}$", property_eoa_address) and not re.match(r"0x[0]{40}$", renter_eoa_address)
+if not renter_eoa_address_valid:
+    page_body.error("EOA Account is invalid", icon="❗")    
 
 # page_body.markdown("---")
 

@@ -13,7 +13,7 @@ load_dotenv()
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 
 ## Set the page configuration to show a title and icon in the brower's tab
-st.set_page_config(page_title="Real-ETHstat - Add a Property", page_icon="➕", layout="wide")
+st.set_page_config(page_title="Real-ETHstat - Add your Property", page_icon="➕", layout="wide")
 
 # Retrieve the contract connection details from the Cache
 contract = st.session_state.contract
@@ -43,15 +43,15 @@ page_body.markdown("Use this function once a property owner has provided all the
 page_body.markdown("1. Details of the property")
 page_body.markdown("2. Property Owner's Account Number")
 
-accounts = w3.eth.accounts
-property_eoa_address = page_body.selectbox("Select your EOA Account as Owner of the Property", options=accounts)
+#accounts = w3.eth.accounts
+#property_eoa_address = page_body.selectbox("Select your EOA Account as Owner of the Property", options=accounts)
 
-# # Capture the Property's EOA address
-# property_eoa_address = page_body.text_input("Owner's EOA Account",
-#                                      max_chars=42,
-#                                      placeholder= "E.g. 0x1234567890abcdefABCDEF1234567890abcdefAB",
-#                                      help="""Owner's EOA Account. An EOA Account is prefixed with `0x` followed by 40 hexadecimal case sensitive characters
-#                                      E.g. `0x1234567890abcdefABCDEF1234567890abcdefAB`""");
+# Capture the Property's EOA address
+property_eoa_address = page_body.text_input("Owner's EOA Account",
+                                     max_chars=42,
+                                     placeholder= "E.g. 0x1234567890abcdefABCDEF1234567890abcdefAB",
+                                     help="""Owner's EOA Account. An EOA Account is prefixed with `0x` followed by 40 hexadecimal case sensitive characters
+                                     E.g. `0x1234567890abcdefABCDEF1234567890abcdefAB`""");
 
 # Use a regular expression with the match function to validate that the EOA Account Address conforms to a valid address.
 # The address must start with `0x` followed by 40 hexadecimal case sensitive characters
@@ -68,29 +68,36 @@ page_body.markdown("## Register a Property")
 
 # /// @dev Address Line 1. E.g.: `Block C Unit 1, 234 Bridge Road Annandale NSW 2008 Australia`
 street_address = page_body.text_input("Property Location", placeholder= "Unit/Street Number and Name, Suburb State Postcode Country", help="Unit/Street Number and Name, Suburb State Postcode Country E.g.: `Block C Unit 1, 234 Bridge Road Annandale NSW 2008 Australia`");
-# /// @dev Land registry Lot / Plan number reference. E.g.: `1863/1000001`, or `35/G/5720` or `1/SP`
-#string lot_plan_number;
-#/// @dev Asking Rent - the weekly rent amount being requested
-#uint256 askingRent; Set by the property owner
 
+# Get the Property type
+# List of property types. Must match the enum PropertyTypes { NotSpecified, House, Townhouse, Apartment, Unit, Villa, Other } specified in the contract
+property_type_list = [ "NotSpecified", "House", "Townhouse", "Apartment", "Unit", "Villa", "Other"]   # Define the property type values (see note above)
+property_type_str = page_body.radio("Property Type", property_type_list, help="Select the type of property", horizontal=True)  # Radio button of the options
+property_type = property_type_list.index(property_type_str)    # Get the index of the option selected as the Radio function returns a string
+
+# Get the Property Title Reference
 lot_plan_number = page_body.text_input("Property Title Reference", placeholder= "Lot/Plan Number", help="Land registry Lot / Plan number reference. E.g.: `1863/1000001`, or `35/G/5720` or `1/SP`");
-property_uri = page_body.text_input("Property URI")
+
+# Get the base URI on IPFS created manually. TO DO: implement Pinata Cloud API to create a folder for the property and then automatically assign to the contract
+property_uri = page_body.text_input("Property URI", placeholder = "IPFS location of documents, images and floorplan", help="Enter the URI to the property's repository. E.g.: `https://ipfs.io/ipfs/bafybeihkoviema7g3gxyt6la7vd5ho3`"  )
 
 # Set the asking rent to 0 when minting as the owner will set it for themselves when activating the property for rent
 askingRent = 0
 
-inputs_complete = (property_eoa_address_valid and street_address and lot_plan_number and property_uri)
-register_button = page_body.button("Register Property", type="primary", disabled= not inputs_complete)
+# Check all inputs have been provided
+inputs_complete = (property_eoa_address_valid and street_address and lot_plan_number and property_type and property_uri )
+register_button = page_body.button("Register Property", type="primary", disabled= not inputs_complete) # Allos the Register button only if all inputs are provided
 
 if register_button:
     tx_hash = contract.functions.safeMint(
         property_eoa_address,
         street_address,
         lot_plan_number,
+        property_type,
         property_uri
     ).transact({'from': property_eoa_address, 'gas': 1000000})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    st.write("Transaction receipt mined:")
-    st.write(dict(receipt))
+    page_body.write("Transaction receipt mined:")
+    page_body.write(dict(receipt))
 st.markdown("---")
 
