@@ -1,5 +1,5 @@
 # Real-ETHstate
-An application based on Ethereum smart contracts to buy and sell real estate.
+An application based on Ethereum smart contracts to tokenise property assets and make them available to rent.
 
 
 Team: Bruno, Owen, Kerry
