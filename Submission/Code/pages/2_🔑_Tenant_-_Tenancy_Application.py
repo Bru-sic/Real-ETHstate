@@ -26,8 +26,11 @@ from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
+import time
+import datetime
 # Import Regular Expression Module (RE)
 import re
+import numpy as np
 
 load_dotenv()
 
@@ -53,17 +56,58 @@ header_col = page_header.columns([.1,.7,.1,.1]) # Create sections in the header 
 # Header text
 header_col[0].image('../Resources/Real-ETHstate_logo.png')
 header_col[1].markdown("Discover your Dream Property with Real-ETHstate Inc.")
-
+header_col[3].markdown("User: Jane Smith")
 
 # Footer content
-page_footer.markdown("---")
-page_footer.markdown("(C) Copyright 2024 Real-ETHstate Inc \t[Terms and Conditions](http://./toc.html)")
-
+st.markdown("---")
+with page_footer:
+    footer_cols = st.columns(5)
+    footer_cols[0].markdown("(C) Copyright 2024 Real-ETHstate Inc.")
+    footer_cols[2].markdown("[Terms and Conditions](http://localhost:8502/terms)")
+    footer_cols[4].image('../Resources/socialmedia.png')
 
 page_body.markdown("# Tenancy Application")
 
-accounts = w3.eth.accounts
-renter_eoa_address = st.selectbox("Select Your Account", options=accounts)
+# Simulate fetching from a DB
+property_id = 0x33d1f7f5e0
+propertyTokenId = 1
+lot_plan_number = "1863/1000001"
+street_address = "25 Wentworth Street, Manly NSW 2095 Australia"
+rent = 500000000000000000 # Rent in Wei
+min_rental_duration=24 # minimum rental period in weeks.
+max_rental_duration=96 # maximum rental period in months.
+bedrooms=4
+bathrooms=3
+floor_space=180
+
+
+# conversion rates
+one_eth_in_wei = 1000000000000000000
+eth_to_usd = 2649.84
+eth_to_aud = 4063.86
+
+with page_body:
+    body_cols = st.columns(2)
+
+    # Use the propert box 
+#    body_cols[0].markdown(f"Property: {lot_plan_number}")
+    body_cols[0].markdown(f"Property ID: {property_id}")
+    body_cols[0].markdown(f"Property Address: {street_address}")
+    body_cols[0].markdown(f"Bedrooms: {bedrooms}")
+    body_cols[0].markdown(f"Bathrooms: {bathrooms}")
+    body_cols[0].markdown(f"Internal Floor Space: {floor_space} m2")
+
+    body_cols[0].markdown(f"Weekly Rent (ETH):{rent/one_eth_in_wei:,}") 
+    body_cols[0].markdown(f"Weekly Rent (USD):{rent/one_eth_in_wei*eth_to_usd:,}")
+    body_cols[0].markdown(f"Weekly Rent (AUD):{rent/one_eth_in_wei*eth_to_aud:,}")
+
+    body_cols[1].image('../Resources/property_0001.png', caption="Seaside Serenity Villa" )
+    body_cols[1].markdown("A stunning 4-bedroom, 3-bathroom villa in a peaceful suburban neighbourhood.")
+
+duration = page_body.slider("Rental duration (weeks)", min_rental_duration, max_rental_duration, min_rental_duration)
+
+end_date = datetime.datetime.now() + datetime.timedelta(weeks=duration)
+page_body.text(f"Contract End: {end_date.date()}")
 
 # Capture the Renter's EOA address
 renter_eoa_address = page_body.text_input("Select your EOA Account",
@@ -74,42 +118,18 @@ renter_eoa_address = page_body.text_input("Select your EOA Account",
 
 # Use a regular expression with the match function to validate that the EOA Account Address conforms to a valid address.
 # The address must start with `0x` followed by 40 hexadecimal case sensitive characters
-renter_eoa_address_valid = re.match(r"0x[a-fA-F0-9]{40}$", property_eoa_address) and not re.match(r"0x[0]{40}$", renter_eoa_address)
-if not renter_eoa_address_valid:
+renter_eoa_address_valid = re.match(r"0x[a-fA-F0-9]{40}$", renter_eoa_address) and not re.match(r"0x[0]{40}$", renter_eoa_address)
+if renter_eoa_address and not renter_eoa_address_valid:
     page_body.error("EOA Account is invalid", icon="❗")    
 
-# page_body.markdown("---")
+rent_button = page_body.button("Rent Property", type="primary", disabled=not renter_eoa_address_valid) # Allows Renting if all inputs are provided
+if rent_button:
+    tx_hash = contract.functions.setUser( # Set the renter's as user
+        p.int256(propertyTokenId),
+        renter_eoa_address,
+        np.uint64(end_date.timestamp())
+    ).transact({'from': st.session_state.property_eoa_address, 'gas': 1000000})
 
-
-
-################################################################################
-# Register a new property
-################################################################################
-page_body.markdown("## Register a Property")
-
-# /// @dev Address Line 1. E.g.: `Block C Unit 1, 234 Bridge Road Annandale NSW 2008 Australia`
-street_address = page_body.text_input("Property Location", placeholder= "Unit/Street Number and Name, Suburb State Postcode Country", help="Unit/Street Number and Name, Suburb State Postcode Country E.g.: `Block C Unit 1, 234 Bridge Road Annandale NSW 2008 Australia`");
-# /// @dev Land registry Lot / Plan number reference. E.g.: `1863/1000001`, or `35/G/5720` or `1/SP`
-#string lot_plan_number;
-#/// @dev Asking Rent - the weekly rent amount being requested
-#uint256 askingRent; Set by the property owner
-
-lot_plan_number = page_body.text_input("Property Title Reference", placeholder= "Lot/Plan Number", help="Land registry Lot / Plan number reference. E.g.: `1863/1000001`, or `35/G/5720` or `1/SP`");
-property_uri = page_body.text_input("Property URI")
-
-# Set the asking rent to 0 when minting as the owner will set it for themselves when activating the property for rent
-askingRent = 0
-
-inputs_complete = (property_eoa_address_valid and street_address and lot_plan_number and property_uri)
-register_button = page_body.button("Register Property", type="primary", disabled= not inputs_complete)
-
-if register_button:
-    tx_hash = contract.functions.safeMint(
-        property_eoa_address,
-        street_address,
-        lot_plan_number,
-        property_uri
-    ).transact({'from': property_eoa_address, 'gas': 1000000})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     st.write("Transaction receipt mined:")
     st.write(dict(receipt))

@@ -4,61 +4,43 @@ An application based on Ethereum smart contracts to buy and sell real estate.
 
 Team: Bruno, Owen, Kerry
 
-Date: 30 January 2024
+Date: 13 Febraury 2024
 
-TO DO Project splash image
+![Image ALT Text](./Submission/Resources/rent.jpg)
 
-![Image ALT Text](./Submission/Resources/splashimage.png)
-# Table of Contents
-TO DO
 
 # Abstract
-TO DO
+**Real-ETHstate:** Utilising blockchain technology in the property market to connect buyers with sellers,  and renters with landlords, while cutting out middlemen to save on administration and legal costs, thereby benefiting all participants in the ecosystem.
+
+## Vision
+To provide an end to end, all encompassing real-estate solution that includes property trading,property management and associated services, in anopen, transparent and efficient manner thanks tothe underlying technologies.
+
+Our project has scope to implement a number of Fintech technologies including:
+* Payments for buying, selling, renting via crypto currencies (ETH)    
+* Record keeping using the blockchain (IPFS)   
+* On chain smart contracts to manage rental agreements.   
+
+In this proof of concept iteration we look to implement property assets as non-fungible tokens with the ability to assign usage to the token through EIP-4907 Rental non-fungible token. 
+
 
 # Submission  
-Source files associated with this solution:   
+Source files associated with are:   
+* [Real-ETHstate App](./Submission/Code/Real-ETHstate.py)
+* [Sub-menu pages](./Submission/Code/pages/)
+* [Real-ETHstate Smart Contract](./Submission/Code/contracts/Real-ETHstate.sol)
 
----
-# User Guide
-
-# Project Requirements
-
----
-
-# Technologies
-* TO DO
-* [ERC-4907](https://eips.ethereum.org/EIPS/eip-4907): Rental non-fungible token, an extension of EIP-721.   
-* [ERC-721](https://docs.openzeppelin.com/contracts/4.x/erc721): a standard for representing ownership of non-fungible tokens, that is, where each token is unique.   
-* [Truffle Suite Ganache](https://trufflesuite.com/docs/ganache/): a personal blockchain for rapid Ethereum and Filecoin distributed application development.   
-
-# Concepts
-* TO DO
-* Eg smart contracts, GUI
-
-
-# Dependencies
-* TO Libraries 
-* [OpenZeppelin ERC20](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/token/ERC20/ERC20.sol)
-
-etc
+# Technologies Architecture
+![Technologies Architecture](./Submission/Resources/Technology_Architecture.png)
 
 
 # Installation / Setup
 * Install [Ganache](https://trufflesuite.com/docs/ganache/quickstart/)
-* Install [MetaMask](https://metamask.io/download/)
 * Install [Streamlit](https://docs.streamlit.io/get-started/installation)
 * Launch [Remix Online IDE](https://remix.ethereum.org) 
-
-
-# Launching
-TO DO
 
 # Briefing
 * [Project Briefing](./Briefing/Capstone_Project_Guidelines.md)   
 
-
-# Future Enhancements
-* [User authentication](https://docs.streamlit.io/library/advanced-features/multipage-apps/custom-navigation)
 
 # Disclaimer
 1. The smart contract included in this project is provided as is.
