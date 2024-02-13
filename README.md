@@ -24,10 +24,22 @@ In this proof of concept iteration we look to implement property assets as non-f
 
 
 # Submission  
+## Source Files
 Source files associated with are:   
 * [Real-ETHstate App](./Submission/Code/Real-ETHstate.py)
 * [Sub-menu pages](./Submission/Code/pages/)
 * [Real-ETHstate Smart Contract](./Submission/Code/contracts/Real-ETHstate.sol)
+
+# Presentation
+[Project Presentation](./Submission/Resources/Project%20_3_Real-ETHstate.pdf)
+
+## Screenshots
+### Admin Minting 
+![Admin Minting](./Submission/Resources/MintingUI.png)
+
+### Tenant Entering into Rental Contract
+![Tenant Entering into Rental Contract](./Submission/Resources/RentalUI.png)
+
 
 # Technologies Architecture
 ![Technologies Architecture](./Submission/Resources/Technology_Architecture.png)
@@ -37,6 +49,14 @@ Source files associated with are:
 * Install [Ganache](https://trufflesuite.com/docs/ganache/quickstart/)
 * Install [Streamlit](https://docs.streamlit.io/get-started/installation)
 * Launch [Remix Online IDE](https://remix.ethereum.org) 
+
+# Launching
+* In Visual Studio Code:
+  * Click on `Real-ETHstate.py` under the /Submission/Code/ folder
+  * Right click and select `Open in Integrated Terminal`
+* In the terminal window type:
+    * `conda activate dev`
+    * `streamlit run Real-ETHstate.py`
 
 # Briefing
 * [Project Briefing](./Briefing/Capstone_Project_Guidelines.md)   
