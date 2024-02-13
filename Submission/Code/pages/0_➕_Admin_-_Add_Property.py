@@ -100,6 +100,7 @@ inputs_complete = (property_eoa_address and property_eoa_address_valid and stree
 register_button = page_body.button("Add", type="primary", disabled= not inputs_complete) # Allows the Register button only if all inputs are provided
 
 if register_button:
+    st.session_state.property_eoa_address = property_eoa_address # Save the propert in the cache for the demo
     tx_hash = contract.functions.safeMint(
         property_eoa_address,
         street_address,
@@ -110,5 +111,8 @@ if register_button:
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     page_body.write("Transaction receipt mined:")
     page_body.write(dict(receipt))
+
+    
+
 st.markdown("---")
 

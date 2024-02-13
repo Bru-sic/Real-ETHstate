@@ -125,9 +125,9 @@ if renter_eoa_address and not renter_eoa_address_valid:
 rent_button = page_body.button("Rent Property", type="primary", disabled=not renter_eoa_address_valid) # Allows Renting if all inputs are provided
 if rent_button:
     tx_hash = contract.functions.setUser( # Set the renter's as user
-        p.int256(propertyTokenId),
+        int(propertyTokenId),
         renter_eoa_address,
-        np.uint64(end_date.timestamp())
+        int(end_date.timestamp())
     ).transact({'from': st.session_state.property_eoa_address, 'gas': 1000000})
 
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
